@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Result Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px 40px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px 40px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f0f0f0;
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s ease;
+        }
+
+        .tab-button.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-danger {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #ff5252;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-icon {
+            padding: 6px 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-icon:hover {
+            opacity: 0.7;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            flex: 1;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            margin: 20px 0;
+            border: 1px solid #f0f0f0;
+            border-radius: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #f8f9fa;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #e9ecef;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .table-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .code-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-display {
+            font-size: 24px;
+            font-weight: bold;
+            font-family: monospace;
+            letter-spacing: 2px;
+        }
+
+        .code-info {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .result-card h2 {
+            font-size: 32px;
+            margin-bottom: 5px;
+        }
+
+        .result-table {
+            width: 100%;
+        }
+
+        .result-table tr:nth-child(odd) {
+            background: #f8f9fa;
+        }
+
+        .result-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .result-table td:last-child {
+            text-align: right;
+            font-weight: 600;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .column-item {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .code-card {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Student Result Manager</h1>
+            <p id="headerSubtitle">Manage student marks and share results securely</p>
+        </div>
+
+        <div class="content">
+            <div class="tabs" id="mainTabs">
+                <button class="tab-button active" onclick="switchTab('home', this)">🏠 Home</button>
+                <button class="tab-button" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
+                <button class="tab-button" onclick="switchTab('codes', this)">🔐 Share Codes</button>
+                <button class="tab-button" onclick="switchTab('manage', this)">📝 Columns</button>
+                <button class="tab-button" onclick="switchTab('settings', this)">⚙️ Settings</button>
+            </div>
+
+            <!-- Home Tab -->
+            <div id="home" class="tab-content active">
+                <div class="result-card">
+                    <h2>Welcome! 👋</h2>
+                    <p style="font-size: 16px; margin-top: 10px;">Choose an option below to get started</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; text-align: center;">
+                        <h3 style="margin-bottom: 15px;">👨‍🏫 Teacher</h3>
+                        <p style="color: #666; margin-bottom: 20px;">Manage students and marks</p>
+                        <button class="btn btn-primary" onclick="switchTab('dashboard')">📊 Go to Dashboard</button>
+                    </div>
+
+                    <div style="background: #f8f9fa; padding: 30px; border-radius: 12px; text-align: center;">
+                        <h3 style="margin-bottom: 15px;">👨‍🎓 Student</h3>
+                        <p style="color: #666; margin-bottom: 20px;">View your marks with code</p>
+                        <button class="btn btn-primary" onclick="showViewResults()">📋 View My Results</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Tab -->
+            <div id="dashboard" class="tab-content">
+                <div class="section-title">Student Results</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Student Name</label>
+                        <div class="input-group">
+                            <input type="text" id="studentName" placeholder="Enter student name">
+                            <button class="btn btn-primary btn-small" onclick="addStudent()">Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="successMessage" class="success-message">✓ Data saved successfully!</div>
+                <div class="table-wrapper" id="tableContainer"></div>
+            </div>
+
+            <!-- Share Codes Tab -->
+            <div id="codes" class="tab-content">
+                <div class="section-title">Student Share Codes & Links 🔐</div>
+                <p style="margin-bottom: 20px; color: #666;">
+                    <strong>Option 1:</strong> Share the 6-digit <strong>Code</strong> with students. They'll enter it themselves.<br>
+                    <strong>Option 2:</strong> Click <strong>Copy Link</strong> to share a direct link. Student clicks and their marks show automatically! ✨
+                </p>
+                <div id="codesContainer"></div>
+            </div>
+
+            <!-- View Results (Hidden by default) -->
+            <div id="viewResults" class="tab-content">
+                <button class="btn btn-secondary back-button" onclick="switchTab('home')">← Back to Home</button>
+                <div class="result-card">
+                    <h2>📋 Enter Your Code</h2>
+                </div>
+
+                <div style="max-width: 400px; margin: 0 auto;">
+                    <div class="form-group">
+                        <label>Your Student Code</label>
+                        <div class="input-group">
+                            <input type="text" id="studentCode" placeholder="Enter 6-digit code" maxlength="6" style="letter-spacing: 2px; font-size: 18px; text-align: center; text-transform: uppercase;">
+                            <button class="btn btn-primary" onclick="viewResults()">View</button>
+                        </div>
+                    </div>
+                    <p style="text-align: center; color: #999; font-size: 12px;">Your teacher gave you a 6-digit code. Enter it above to see your marks.</p>
+                </div>
+
+                <div id="resultDisplay"></div>
+            </div>
+
+            <!-- Manage Columns Tab -->
+            <div id="manage" class="tab-content">
+                <div class="section-title">Manage Columns</div>
+                
+                <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h3 style="margin-bottom: 15px; font-size: 16px;">Add New Column</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Column Name</label>
+                            <input type="text" id="columnName" placeholder="e.g., Math">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Marks</label>
+                            <input type="number" id="columnMax" value="100">
+                        </div>
+                    </div>
+                    <button class="btn btn-primary" onclick="addColumn()">➕ Add Column</button>
+                </div>
+
+                <h3 style="margin-bottom: 15px;">Current Columns</h3>
+                <div id="columnList"></div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div id="settings" class="tab-content">
+                <div class="section-title">Settings</div>
+                <button class="btn btn-primary" onclick="exportData()" style="width: 100%; margin-bottom: 10px; justify-content: center;">📥 Export Data</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()" style="width: 100%; margin-bottom: 10px; justify-content: center;">📤 Import Data</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                <button class="btn btn-secondary" onclick="showFilePathModal()" style="width: 100%; margin-bottom: 10px; justify-content: center;">📁 Change File Path</button>
+                <button class="btn btn-danger" onclick="clearAllData()" style="width: 100%; justify-content: center;">🗑️ Clear All</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="filePathModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 12px; max-width: 600px; width: 90%;">
+            <div style="font-size: 20px; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between;">
+                <span>📁 Setup Student Link Sharing</span>
+                <button onclick="document.getElementById('filePathModal').style.display = 'none'" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+            </div>
+            
+            <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #856404;">
+                <strong>⚠️ One-time setup needed!</strong><br>
+                Enter the file path or URL where this HTML file is located. Student links will include this path.
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display: block; margin-bottom: 8px; font-weight: 500;">Where is your Student Result Manager file?</label>
+                <input type="text" id="filePathInput" placeholder="Examples below..." style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 12px; font-family: monospace; margin-bottom: 15px;">
+                
+                <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; font-size: 12px; color: #666;">
+                    <strong>📌 Examples:</strong><br><br>
+                    
+                    <strong>Local File:</strong><br>
+                    <code style="display: block; background: white; padding: 8px; margin: 5px 0; border-radius: 4px;">C:/Users/YourName/Desktop/Student_Result_Manager.html</code>
+                    
+                    <strong>OR Local with file:// protocol:</strong><br>
+                    <code style="display: block; background: white; padding: 8px; margin: 5px 0; border-radius: 4px;">file:///C:/Users/YourName/Desktop/Student_Result_Manager.html</code>
+                    
+                    <strong>OR Web URL:</strong><br>
+                    <code style="display: block; background: white; padding: 8px; margin: 5px 0; border-radius: 4px;">https://yoursite.com/Student_Result_Manager.html</code>
+                    
+                    <strong>OR Google Drive Share Link (ends with .html):</strong><br>
+                    <code style="display: block; background: white; padding: 8px; margin: 5px 0; border-radius: 4px;">https://drive.google.com/.../Student_Result_Manager.html</code>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="saveFilePath()" style="width: 100%; margin-bottom: 10px;">✅ Save & Continue</button>
+        </div>
+    </div>
+
+    <div id="editModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 12px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
+            <div style="font-size: 20px; font-weight: 600; margin-bottom: 20px; display: flex; justify-content: space-between;">
+                <span>Edit Student Marks</span>
+                <button onclick="closeEditModal()" style="background: none; border: none; font-size: 24px; cursor: pointer;">×</button>
+            </div>
+            <div id="editForm"></div>
+        </div>
+    </div>
+
+    <div id="shareLinkModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 30px; border-radius: 12px; max-width: 600px; width: 90%; text-align: center;">
+            <div style="font-size: 24px; font-weight: 600; margin-bottom: 20px;">🔗 Share Link</div>
+            
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <p style="font-size: 12px; color: #666; margin-bottom: 10px;">For: <strong id="studentNameInModal"></strong></p>
+                <div style="background: white; padding: 15px; border-radius: 6px; border: 2px solid #667eea; word-break: break-all; font-family: monospace; font-size: 12px; margin-bottom: 15px;">
+                    <span id="shareLinkText"></span>
+                </div>
+                <button class="btn btn-primary" style="width: 100%;" onclick="copyLinkAgain()">✓ Link Copied to Clipboard</button>
+            </div>
+            
+            <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; color: #1976d2;">
+                <strong>📱 How to Share:</strong><br>
+                ✅ Paste this link in WhatsApp, Email, SMS, or any messaging app<br>
+                ✅ When student clicks the link, they'll see their marks instantly!
+            </div>
+            
+            <button class="btn btn-secondary" onclick="closeShareModal()" style="width: 100%;">Close</button>
+        </div>
+    </div>
+    <script>
+        let students = [];
+        let columns = [
+            { id: 1, name: 'Math', maxMarks: 100 },
+            { id: 2, name: 'English', maxMarks: 100 }
+        ];
+        let nextColumnId = 3;
+        let isStudentMode = false;
+
+        // Check URL for mode parameter
+        function checkMode() {
+            const urlParams = new URLSearchParams(window.location.search);
+            isStudentMode = urlParams.get('mode') === 'student' || urlParams.get('code');
+            
+            if (isStudentMode) {
+                // Hide teacher tabs
+                document.getElementById('mainTabs').style.display = 'none';
+                document.getElementById('home').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'none';
+                document.getElementById('codes').style.display = 'none';
+                document.getElementById('manage').style.display = 'none';
+                document.getElementById('settings').style.display = 'none';
+                document.getElementById('viewResults').style.display = 'block';
+                document.getElementById('viewResults').classList.add('active');
+                
+                // Update header
+                document.querySelector('.header h1').textContent = '📋 View Your Results';
+                document.getElementById('headerSubtitle').textContent = 'Enter your code to see your marks';
+                
+                // Auto-fill code if provided
+                const code = urlParams.get('code');
+                if (code) {
+                    document.getElementById('studentCode').value = code;
+                    setTimeout(viewResults, 500);
+                }
+            }
+        }
+
+        // Get or set file path for sharing
+        function getFilePathForSharing() {
+            let filePath = localStorage.getItem('srm_filePath');
+            
+            if (!filePath) {
+                showFilePathModal();
+                return null;
+            }
+            return filePath;
+        }
+
+        // Show file path setup modal
+        function showFilePathModal() {
+            const currentPath = localStorage.getItem('srm_filePath') || '';
+            document.getElementById('filePathInput').value = currentPath;
+            const modal = document.getElementById('filePathModal');
+            modal.style.display = 'flex';
+        }
+
+        // Save file path
+        function saveFilePath() {
+            const filePath = document.getElementById('filePathInput').value.trim();
+            
+            if (!filePath) {
+                alert('Please enter your file path or URL');
+                return;
+            }
+            
+            // Check if it's a valid URL (starts with http) or local file (ends with .html)
+            const isUrl = filePath.startsWith('http://') || filePath.startsWith('https://');
+            const isLocalFile = filePath.endsWith('.html');
+            
+            if (!isUrl && !isLocalFile) {
+                alert('Please enter a valid:\n\n✅ Web URL (starts with http)\n✅ Local file path (ends with .html)\n✅ Google Drive link');
+                return;
+            }
+            
+            localStorage.setItem('srm_filePath', filePath);
+            document.getElementById('filePathModal').style.display = 'none';
+            alert('✅ File path saved!');
+        }
+
+        // Get student link with correct file path
+        function getStudentLink(code) {
+            let filePath = localStorage.getItem('srm_filePath');
+            
+            if (!filePath) {
+                showFilePathModal();
+                return 'Error: Please set file path first';
+            }
+            
+            return filePath + '?mode=student&code=' + code;
+        }
+
+        // Copy link to clipboard
+        function copyStudentLink(code, studentName) {
+            const link = getStudentLink(code);
+            
+            // Show modal with link
+            const modal = document.getElementById('shareLinkModal');
+            document.getElementById('shareLinkText').textContent = link;
+            document.getElementById('studentNameInModal').textContent = studentName;
+            modal.style.display = 'flex';
+            
+            // Copy to clipboard
+            navigator.clipboard.writeText(link).then(() => {
+                // Link copied successfully
+            }).catch(() => {
+                alert('Please copy this link manually:\n' + link);
+            });
+        }
+        
+        // Close share modal
+        function closeShareModal() {
+            document.getElementById('shareLinkModal').style.display = 'none';
+        }
+
+        // Initialize
+        function init() {
+            checkMode();
+            loadData();
+            renderDashboard();
+            renderColumnList();
+            renderCodes();
+        }
+        
+        // Check if we need to set file path (on clicking Share Codes tab)
+        function checkFilePathBeforeShare() {
+            const filePath = localStorage.getItem('srm_filePath');
+            if (!filePath) {
+                showFilePathModal();
+            }
+        }
+
+        // Switch tab
+        function switchTab(tabName, buttonElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            
+            const tab = document.getElementById(tabName);
+            if (tab) {
+                tab.classList.add('active');
+                if (buttonElement) {
+                    buttonElement.classList.add('active');
+                }
+            }
+            
+            // Check file path when going to Share Codes tab
+            if (tabName === 'codes') {
+                checkFilePathBeforeShare();
+            }
+            
+            // Hide/show main tabs based on view
+            if (tabName === 'viewResults') {
+                document.getElementById('mainTabs').style.display = 'none';
+            } else {
+                document.getElementById('mainTabs').style.display = 'flex';
+            }
+        }
+
+        // Show view results
+        function showViewResults() {
+            document.getElementById('viewResults').classList.add('active');
+            document.getElementById('mainTabs').style.display = 'none';
+            document.getElementById('home').classList.remove('active');
+            document.getElementById('headerSubtitle').textContent = 'Enter your code to view your marks';
+        }
+
+        // View results with code
+        function viewResults() {
+            const code = document.getElementById('studentCode').value.trim().toUpperCase();
+            if (!code) {
+                alert('Please enter your code');
+                return;
+            }
+
+            const student = students.find(s => s.code === code);
+            if (!student) {
+                alert('Invalid code. Please check and try again.');
+                return;
+            }
+
+            displayStudentResult(student);
+        }
+
+        // Display student result
+        function displayStudentResult(student) {
+            let html = `
+                <div class="result-card">
+                    <h2>${student.name}</h2>
+                    <p>Your Academic Results</p>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="result-table">
+                        <thead>
+                            <tr>
+                                <th>Subject</th>
+                                <th>Marks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            columns.forEach(col => {
+                const marks = student.marks[col.id] || '-';
+                html += `
+                    <tr>
+                        <td>${col.name}</td>
+                        <td>${marks}${marks !== '-' ? '/' + col.maxMarks : ''}</td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+                <div style="text-align: center; margin-top: 30px; color: #999; font-size: 12px;">
+                    <p>Results generated on ${new Date().toLocaleDateString()}</p>
+                    <button class="btn btn-secondary" onclick="resetViewResults()" style="margin-top: 20px;">View Another Code</button>
+                </div>
+            `;
+
+            document.getElementById('resultDisplay').innerHTML = html;
+        }
+
+        // Reset view results
+        function resetViewResults() {
+            document.getElementById('studentCode').value = '';
+            document.getElementById('resultDisplay').innerHTML = '';
+            document.getElementById('studentCode').focus();
+        }
+
+        // Add student
+        function addStudent() {
+            const nameInput = document.getElementById('studentName');
+            const name = nameInput.value.trim();
+            
+            if (!name) {
+                alert('Please enter student name');
+                return;
+            }
+
+            if (students.some(s => s.name.toLowerCase() === name.toLowerCase())) {
+                alert('Student already exists');
+                return;
+            }
+
+            // Generate unique 6-digit code
+            let code;
+            let codeExists = true;
+            while (codeExists) {
+                code = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
+                codeExists = students.some(s => s.code === code);
+            }
+
+            const student = {
+                id: Date.now(),
+                name: name,
+                code: code,
+                marks: {}
+            };
+
+            columns.forEach(col => {
+                student.marks[col.id] = '';
+            });
+
+            students.push(student);
+            nameInput.value = '';
+            saveData();
+            renderDashboard();
+            renderCodes();
+            showSuccessMessage();
+        }
+
+        // Add column
+        function addColumn() {
+            const nameInput = document.getElementById('columnName');
+            const maxInput = document.getElementById('columnMax');
+            const name = nameInput.value.trim();
+            const maxMarks = parseInt(maxInput.value) || 100;
+
+            if (!name) {
+                alert('Please enter column name');
+                return;
+            }
+
+            const column = {
+                id: nextColumnId++,
+                name: name,
+                maxMarks: maxMarks
+            };
+
+            columns.push(column);
+            students.forEach(student => {
+                student.marks[column.id] = '';
+            });
+
+            nameInput.value = '';
+            maxInput.value = '100';
+            saveData();
+            renderDashboard();
+            renderColumnList();
+            renderCodes();
+            showSuccessMessage();
+        }
+
+        // Delete column
+        function deleteColumn(id) {
+            if (!confirm('Delete this column?')) return;
+            columns = columns.filter(c => c.id !== id);
+            students.forEach(student => {
+                delete student.marks[id];
+            });
+            saveData();
+            renderDashboard();
+            renderColumnList();
+            renderCodes();
+        }
+
+        // Delete student
+        function deleteStudent(id) {
+            if (!confirm('Delete this student?')) return;
+            students = students.filter(s => s.id !== id);
+            saveData();
+            renderDashboard();
+            renderCodes();
+        }
+
+        // Edit student
+        function editStudent(id) {
+            const student = students.find(s => s.id === id);
+            const editForm = document.getElementById('editForm');
+            
+            let html = '<div id="markInputs">';
+            columns.forEach(col => {
+                html += `
+                    <div class="form-group">
+                        <label>${col.name} (Max: ${col.maxMarks})</label>
+                        <input type="number" data-col-id="${col.id}" value="${student.marks[col.id] || ''}" min="0" max="${col.maxMarks}">
+                    </div>
+                `;
+            });
+            html += '</div><div style="display: flex; gap: 10px; margin-top: 20px;"><button class="btn btn-primary" onclick="saveMarks(' + id + ')" style="flex: 1;">Save</button><button class="btn btn-secondary" onclick="closeEditModal()" style="flex: 1;">Cancel</button></div>';
+
+            editForm.innerHTML = html;
+            document.getElementById('editModal').style.display = 'flex';
+        }
+
+        // Save marks
+        function saveMarks(id) {
+            const student = students.find(s => s.id === id);
+            const inputs = document.querySelectorAll('#markInputs input');
+            inputs.forEach(input => {
+                const colId = parseInt(input.dataset.colId);
+                student.marks[colId] = input.value || '';
+            });
+            saveData();
+            renderDashboard();
+            renderCodes();
+            closeEditModal();
+            showSuccessMessage();
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editModal').style.display = 'none';
+        }
+
+        // Render dashboard
+        function renderDashboard() {
+            const container = document.getElementById('tableContainer');
+            if (students.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No students yet</h3><p>Add a student to get started</p></div>';
+                return;
+            }
+
+            let html = '<table><thead><tr><th>Student Name</th>';
+            columns.forEach(col => html += '<th>' + col.name + '</th>');
+            html += '<th>Actions</th></tr></thead><tbody>';
+
+            students.forEach(student => {
+                html += '<tr><td><strong>' + student.name + '</strong></td>';
+                columns.forEach(col => {
+                    const marks = student.marks[col.id] || '-';
+                    html += '<td>' + marks + '</td>';
+                });
+                html += '<td><div class="table-actions"><button class="btn-icon" onclick="editStudent(' + student.id + ')">✏️</button><button class="btn-icon" onclick="deleteStudent(' + student.id + ')">🗑️</button></div></td></tr>';
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Render column list
+        function renderColumnList() {
+            const list = document.getElementById('columnList');
+            if (columns.length === 0) {
+                list.innerHTML = '<p class="empty-state">No columns yet.</p>';
+                return;
+            }
+
+            let html = '';
+            columns.forEach(col => {
+                html += '<div class="column-item"><div><strong>' + col.name + '</strong><p style="font-size: 12px; color: #999; margin-top: 4px;">Max: ' + col.maxMarks + '</p></div><button class="btn-icon" onclick="deleteColumn(' + col.id + ')">🗑️</button></div>';
+            });
+            list.innerHTML = html;
+        }
+
+        // Render codes
+        function renderCodes() {
+            const container = document.getElementById('codesContainer');
+            if (students.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No codes yet</h3><p>Add students to generate codes</p></div>';
+                return;
+            }
+
+            let html = '';
+            students.forEach(student => {
+                html += `
+                    <div class="code-card">
+                        <div>
+                            <div style="text-align: left; font-size: 14px;"><strong>${student.name}</strong></div>
+                            <div style="text-align: left; font-size: 12px; margin-top: 5px; opacity: 0.8;">Code: <span style="font-weight: bold; letter-spacing: 1px;">${student.code}</span></div>
+                        </div>
+                        <div>
+                            <button class="btn btn-primary btn-small copy-link-btn" data-code="${student.code}" data-name="${student.name}" style="margin-bottom: 8px; width: 100%;">🔗 Copy Link</button>
+                            <div class="code-display" style="font-size: 18px;">${student.code}</div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+            
+            // Add event listeners to copy buttons
+            document.querySelectorAll('.copy-link-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const code = this.dataset.code;
+                    const name = this.dataset.name;
+                    copyStudentLink(code, name);
+                });
+            });
+        }
+
+        // Save data
+        function saveData() {
+            localStorage.setItem('srm_students', JSON.stringify(students));
+            localStorage.setItem('srm_columns', JSON.stringify(columns));
+            localStorage.setItem('srm_nextColumnId', nextColumnId.toString());
+        }
+
+        // Load data
+        function loadData() {
+            const saved = localStorage.getItem('srm_students');
+            const cols = localStorage.getItem('srm_columns');
+            const nextId = localStorage.getItem('srm_nextColumnId');
+
+            if (saved) students = JSON.parse(saved);
+            if (cols) columns = JSON.parse(cols);
+            if (nextId) nextColumnId = parseInt(nextId);
+
+            // Fix missing codes for existing students
+            students.forEach(student => {
+                if (!student.code) {
+                    let code;
+                    let codeExists = true;
+                    while (codeExists) {
+                        code = String(Math.floor(Math.random() * 1000000)).padStart(6, '0');
+                        codeExists = students.some(s => s.code === code);
+                    }
+                    student.code = code;
+                }
+            });
+
+            // Save if we fixed any codes
+            if (students.some(s => !s.code)) {
+                saveData();
+            }
+        }
+
+        // Export data
+        function exportData() {
+            const data = { students, columns, exportDate: new Date().toISOString() };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'student-results-' + Date.now() + '.json';
+            link.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // Import data
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    students = data.students || [];
+                    columns = data.columns || [];
+                    if (columns.length > 0) {
+                        nextColumnId = Math.max(...columns.map(c => c.id)) + 1;
+                    }
+                    saveData();
+                    renderDashboard();
+                    renderColumnList();
+                    renderCodes();
+                    alert('Data imported!');
+                } catch (error) {
+                    alert('Invalid file');
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Clear all data
+        function clearAllData() {
+            if (!confirm('Delete all data?')) return;
+            students = [];
+            columns = [
+                { id: 1, name: 'Math', maxMarks: 100 },
+                { id: 2, name: 'English', maxMarks: 100 }
+            ];
+            nextColumnId = 3;
+            saveData();
+            renderDashboard();
+            renderColumnList();
+            renderCodes();
+            showSuccessMessage();
+        }
+
+        // Show success
+        function showSuccessMessage() {
+            const msg = document.getElementById('successMessage');
+            msg.classList.add('show');
+            setTimeout(() => msg.classList.remove('show'), 3000);
+        }
+
+        // Copy link again from modal
+        function copyLinkAgain() {
+            const link = document.getElementById('shareLinkText').textContent;
+            navigator.clipboard.writeText(link);
+            alert('✅ Link copied!');
+        }
+
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
